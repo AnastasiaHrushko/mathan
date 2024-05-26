@@ -1,0 +1,46 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+def logistic_growth(t, N, r, K):
+    return r * N * (1 - N / K)
+
+def runge_kutta(f, t0, N0, h, r, K, num_steps):
+    t = t0
+    N = N0
+    t_values = [t]
+    N_values = [N]
+
+    for _ in range(num_steps):
+        k1 = h * f(t, N, r, K)
+        k2 = h * f(t + 0.5*h, N + 0.5*k1, r, K)
+        k3 = h * f(t + 0.5*h, N + 0.5*k2, r, K)
+        k4 = h * f(t + h, N + k3, r, K)
+
+        N += (k1 + 2*k2 + 2*k3 + k4) / 6
+        t += h
+
+        t_values.append(t)
+        N_values.append(N)
+
+    return t_values, N_values
+
+# Параметры модели
+r = 0.1
+K = 1000
+
+# Начальные условия
+t0 = 0
+N0 = 100
+
+# Параметры численного метода
+h = 0.1
+num_steps = 100
+
+t_values, N_values = runge_kutta(logistic_growth, t0, N0, h, r, K, num_steps)
+
+plt.figure()
+plt.plot(t_values, N_values)
+plt.xlabel('Time')
+plt.ylabel('Population size')
+plt.title('Logistic Growth Model')
+plt.show()
